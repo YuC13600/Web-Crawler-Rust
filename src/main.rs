@@ -1,4 +1,4 @@
-use fantoccini::{Client, Locator};
+use fantoccini::{Locator, ClientBuilder};
 use std::process::Command;
 use colored::*;
 
@@ -12,7 +12,7 @@ async fn main() -> Result<(), fantoccini::error::CmdError> {
     let folder_name = String::from("siesta");
     
     let mut failed_case: Vec<String> = Vec::new();
-    let a = Client::new(web_driver_adderss).await.expect("client a failed to connect to WebDriver");
+    let a = ClientBuilder::native().connect(web_driver_adderss).await.expect("client a failed to connect to WebDriver");
     a.goto(origin_url.as_str()).await?;
     let page_1_all_page_tab: Vec<_> = a.find_all(Locator::Css(".paginator-page")).await?;
     let page_quantity_str = page_1_all_page_tab[page_1_all_page_tab.len() - 1].clone().html(true).await.unwrap();
@@ -28,7 +28,7 @@ async fn main() -> Result<(), fantoccini::error::CmdError> {
     let mut post_pages: Vec<String> = Vec::new();
     for (i, page) in url_of_each_page.iter().enumerate() {
         println!("collocting post url from page {}", i+1);
-        let c = Client::new(web_driver_adderss).await.expect("client c failed to connect to WebDriver");
+        let c = ClientBuilder::native().connect(web_driver_adderss).await.expect("client c failed to connect to WebDriver");
         c.goto(page.as_str()).await?;
         
         let previews: Vec<_> = c.find_all(Locator::Css(".post-preview-link")).await?;
@@ -51,7 +51,7 @@ async fn main() -> Result<(), fantoccini::error::CmdError> {
     
     Command::new("powershell").arg(format!("mkdir {}", folder_name)).output().expect("powershell err");
     for (i, page) in post_pages.iter().enumerate() {
-        let d = Client::new(web_driver_adderss).await.expect("client d failed to connect to WebDriver");
+        let d = ClientBuilder::native().connect(web_driver_adderss).await.expect("client d failed to connect to WebDriver");
         d.goto(page).await?;
         let img_html = match d.find(Locator::Css(".image-view-original-link")).await {
             Ok(img) => img.html(false).await?,
