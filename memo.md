@@ -1,0 +1,1 @@
+accessing danbooru page over 1000 require upgrading to gold account
